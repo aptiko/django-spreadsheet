@@ -9,6 +9,7 @@ with open('README.rst') as readme_file:
 
 requirements = [
     "django>=2.2,<4",
+    "openpyxl>=3,<4",
 ]
 
 test_requirements = [ ]

@@ -63,3 +63,18 @@ API
          will have the same result when used as the :data:`value`. In
          this case, prefer the first format. Use a function only for the
          cases when a string cannot do what you want.
+
+   .. attribute:: django_spreadsheet.Worksheet.column_width_factor
+
+      Optional. A number specifying how large to make column widths.
+
+      django-spreadsheet attempts to "autofit" columns. However, in order to
+      actually autofit columns, the spreadsheet would need to be rendered.
+      django-spreadsheet (and the openpyxl library on which it is based) does
+      not have rendering capabilities, therefore it cannot really autofit
+      columns.
+
+      The best we can do is find the max character length for each column and
+      multiply it with a number, namely
+      :attr:`~django_spreadsheet.Worksheet.column_width_factor`. The default is
+      1.23, which has been found with experimentation to provide good results.

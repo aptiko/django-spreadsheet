@@ -1,6 +1,6 @@
 import django_spreadsheet
 
-from .models import Book
+from .models import Author, Book
 
 
 class BooksWorksheet(django_spreadsheet.Worksheet):
@@ -18,8 +18,15 @@ class BooksWorksheet(django_spreadsheet.Worksheet):
     ]
 
 
+class AuthorsWorksheet(django_spreadsheet.Worksheet):
+    model = Author
+    name = "Authors"
+    columns = [ { "heading": "Name", "value": "name" } ]
+
+
 class DownloadBooksWorkbookView(django_spreadsheet.WorkbookView):
-    filename = "bookx.xlsx"
+    filename = "books.xlsx"
     worksheets = [
         BooksWorksheet,
+        AuthorsWorksheet,
     ]
