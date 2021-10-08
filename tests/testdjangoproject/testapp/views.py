@@ -21,7 +21,7 @@ class BooksWorksheet(django_spreadsheet.Worksheet):
 class AuthorsWorksheet(django_spreadsheet.Worksheet):
     model = Author
     name = "Authors"
-    columns = [ { "heading": "Name", "value": "name" } ]
+    columns = [{"heading": "Name", "value": "name"}]
 
 
 class DownloadBooksWorkbookView(django_spreadsheet.WorkbookView):

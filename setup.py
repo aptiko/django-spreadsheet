@@ -2,9 +2,9 @@
 import os
 import re
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
-with open('README.rst') as readme_file:
+with open("README.rst") as readme_file:
     readme = readme_file.read()
 
 requirements = [
@@ -12,7 +12,7 @@ requirements = [
     "openpyxl>=3,<4",
 ]
 
-test_requirements = [ ]
+test_requirements = []
 
 
 def get_version():
@@ -21,33 +21,33 @@ def get_version():
     with open(init_py_path) as f:
         return re.search(r'^__version__ = "(.*?)"$', f.read(), re.MULTILINE).group(1)
 
+
 setup(
     author="Antonis Christofides",
-    author_email='antonis@antonischristofides.com',
-    python_requires='>=3.6',
+    author_email="antonis@antonischristofides.com",
+    python_requires=">=3.6",
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     description="Create a spreadsheet from the database with minimal code",
     install_requires=requirements,
     license="BSD license",
     long_description=readme,
     include_package_data=True,
-    keywords='django-spreadsheet',
-    name='django-spreadsheet',
-    packages=find_packages(include=['django_spreadsheet', 'django_spreadsheet.*']),
-    test_suite='tests',
+    keywords="django-spreadsheet",
+    name="django-spreadsheet",
+    packages=find_packages(include=["django_spreadsheet", "django_spreadsheet.*"]),
+    test_suite="tests",
     tests_require=test_requirements,
-    url='https://github.com/aptiko/django-spreadsheet',
+    url="https://github.com/aptiko/django-spreadsheet",
     version=get_version(),
     zip_safe=False,
 )

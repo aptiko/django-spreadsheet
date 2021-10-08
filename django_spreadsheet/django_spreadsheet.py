@@ -1,5 +1,5 @@
-from io import BytesIO
 import mimetypes
+from io import BytesIO
 
 from django.http import HttpResponse
 from django.views.generic import View
@@ -76,7 +76,6 @@ class WorkbookView(View):
         obj = BytesIO()
         self._wb.save(obj)
         self._response = HttpResponse(
-            obj.getvalue(), content_type=mimetypes.guess_type(self.filename)[0],
+            obj.getvalue(), content_type=mimetypes.guess_type(self.filename)[0]
         )
         self._response["Content-Disposition"] = f"attachment; filename={self.filename}"
-        

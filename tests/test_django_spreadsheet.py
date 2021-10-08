@@ -4,8 +4,6 @@ from django.test import TestCase
 
 import openpyxl
 
-import django_spreadsheet
-
 from testapp.models import Author, Book
 from testapp.views import AuthorsWorksheet, BooksWorksheet
 
@@ -94,7 +92,7 @@ class WorksheetTestCase(TestCase, GetWorksheetBodyMixin):
 
     def test_heading_is_bold(self):
         self.assertTrue(self.wb["Books"].row_dimensions[1].font.bold)
-        
+
     def test_body_is_not_bold(self):
         self.assertFalse(self.wb["Books"].row_dimensions[2].font.bold)
 
