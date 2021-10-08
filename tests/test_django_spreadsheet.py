@@ -1,21 +1,11 @@
 #!/usr/bin/env python
 
-"""Tests for `django_spreadsheet` package."""
+from django.test import TestCase
+
+import django_spreadsheet
 
 
-import unittest
-
-from django_spreadsheet import django_spreadsheet
-
-
-class TestDjango_spreadsheet(unittest.TestCase):
-    """Tests for `django_spreadsheet` package."""
-
-    def setUp(self):
-        """Set up test fixtures, if any."""
-
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
-
-    def test_000_something(self):
-        """Test something."""
+class WorkbookViewTestCase(TestCase):
+    def test_view(self):
+        response = self.client.get("/downloadbooks/")
+        self.assertEqual(response.status_code, 200)
