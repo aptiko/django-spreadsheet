@@ -76,7 +76,7 @@ class WorkbookView(View):
         obj = BytesIO()
         self._wb.save(obj)
         self._response = HttpResponse(
-            obj.getvalue(),
-            content_type=mimetypes.guess_type(self.filename)[0],
-            headers={"Content-Disposition": f"attachment; filename={self.filename}"},
+            obj.getvalue(), content_type=mimetypes.guess_type(self.filename)[0],
         )
+        self._response["Content-Disposition"] = f"attachment; filename={self.filename}"
+        

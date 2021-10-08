@@ -9,7 +9,13 @@ python:
 install:
  - pip install --upgrade pip
  - pip install black codecov coverage isort flake8
+ - pip install -q "Django$DJANGO_VERSION"
  - pip install -e .
+
+env:
+  matrix:
+   - DJANGO_VERSION=">=2.2,<3"
+   - DJANGO_VERSION=">=3.2,<4"
 
 script:
  - black --check .

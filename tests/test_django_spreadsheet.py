@@ -19,13 +19,13 @@ class WorkbookViewTestCase(TestCase):
 
     def test_filename(self):
         self.assertEqual(
-            self.response.headers["Content-Disposition"],
+            self.response["Content-Disposition"],
             "attachment; filename=books.xlsx",
         )
 
     def test_mimetype(self):
         self.assertEqual(
-            self.response.headers["Content-Type"],
+            self.response["Content-Type"],
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
