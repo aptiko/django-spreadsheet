@@ -1,0 +1,21 @@
+language: python
+python:
+  - 3.10
+  - 3.9
+  - 3.8
+  - 3.7
+  - 3.6
+
+install:
+ - pip install --upgrade pip
+ - pip install black codecov coverage isort flake8
+ - pip install -e .
+
+script:
+ - black --check .
+ - flake8 --max-line-length=88 .
+ - isort --recursive --check-only --diff *.py django_spreadsheet tests
+ - coverage run --include="./*" --omit="docs/","*/tests/*","*/tests.py","setup.py" -m unittest -v
+
+after_success:
+ - codecov
