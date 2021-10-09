@@ -3,11 +3,11 @@ django-spreadsheet
 ==================
 
 
-.. image:: https://img.shields.io/pypi/v/django_spreadsheet.svg
-        :target: https://pypi.python.org/pypi/django_spreadsheet
+.. image:: https://img.shields.io/pypi/v/django-spreadsheet.svg
+        :target: https://pypi.python.org/pypi/django-spreadsheet
 
-.. image:: https://img.shields.io/travis/aptiko/django_spreadsheet.svg
-        :target: https://travis-ci.com/aptiko/django_spreadsheet
+.. image:: https://img.shields.io/travis/com/aptiko/django-spreadsheet.svg
+        :target: https://app.travis-ci.com/github/aptiko/django-spreadsheet
 
 .. image:: https://readthedocs.org/projects/django-spreadsheet/badge/?version=latest
         :target: https://django-spreadsheet.readthedocs.io/en/latest/?version=latest
