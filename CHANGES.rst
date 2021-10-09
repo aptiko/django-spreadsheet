@@ -2,7 +2,7 @@
 History
 =======
 
-0.1.0dev (YYYY-MM-DD)
----------------------
+1.0.0 (2021-10-09)
+------------------
 
-First release.
+Initial release.
