@@ -13,13 +13,6 @@ django-spreadsheet
         :target: https://django-spreadsheet.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
 
-
-.. image:: https://pyup.io/repos/github/aptiko/django_spreadsheet/shield.svg
-     :target: https://pyup.io/repos/github/aptiko/django_spreadsheet/
-     :alt: Updates
-
-
-
 Create a spreadsheet from the database with minimal code
 
 
