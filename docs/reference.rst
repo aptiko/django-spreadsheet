@@ -2,6 +2,9 @@
 Reference
 =========
 
+WorkbookView
+============
+
 .. class:: django_spreadsheet.WorkbookView
 
    Base class for a Django view whose response is an xlsx workbook. You
@@ -19,9 +22,19 @@ Reference
       A list of :class:`~django_spreadsheet.Worksheet` classes. The
       returned workbook will contain these worksheets.
 
+Worksheet
+=========
+
 .. class:: django_spreadsheet.Worksheet
 
    Base class for worksheets.
+
+   Do not attempt to instantiate :class:`~django_spreadsheet.Worksheet`
+   objects directly. They are only meant to be instantiated
+   automatically by :class:`~django_spreadsheet.WorkbookView`, which
+   will also set ``self.request`` to the Django request object. This can
+   come in handy in
+   :meth:`~django_spreadsheet.Worksheet.get_queryset()`.
 
    .. attribute:: django_spreadsheet.Worksheet.model
 
