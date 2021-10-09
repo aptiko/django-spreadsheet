@@ -6,7 +6,7 @@ django-spreadsheet documentation
    :caption: Contents:
 
    quick-start
-   api
+   reference
    Release history <changes>
 
 Indices and tables

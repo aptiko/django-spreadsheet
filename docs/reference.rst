@@ -1,6 +1,6 @@
-===
-API
-===
+=========
+Reference
+=========
 
 .. class:: django_spreadsheet.WorkbookView
 
