@@ -9,6 +9,9 @@ django-spreadsheet
 .. image:: https://img.shields.io/travis/com/aptiko/django-spreadsheet.svg
         :target: https://app.travis-ci.com/github/aptiko/django-spreadsheet
 
+.. image:: https://img.shields.io/codecov/c/gh/aptiko/django-spreadsheet
+        :target: https://app.codecov.io/gh/aptiko/django-spreadsheet
+
 .. image:: https://readthedocs.org/projects/django-spreadsheet/badge/?version=latest
         :target: https://django-spreadsheet.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
