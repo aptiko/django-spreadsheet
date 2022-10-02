@@ -69,13 +69,40 @@ Worksheet
          ``obj`` of the queryset the cell value will be
          ``obj.author.name``.
 
-         If it is a function, it receives one argument, the queryset
-         item, and it returns the cell value.
+         If it is a one-argument function, it receives the queryset
+         item and returns the cell value.  Thus, ``"author.name"`` and
+         ``lambda obj: obj.author.name`` will have the same result when
+         used as the :data:`value`. In this case, prefer the first
+         format. Use a function only for the cases when a string cannot
+         do what you want.
 
-         Thus, ``"author.name"`` and ``lambda obj: obj.author.name``
-         will have the same result when used as the :data:`value`. In
-         this case, prefer the first format. Use a function only for the
-         cases when a string cannot do what you want.
+         If the function is a two-argument function, it receives the
+         :class:`~django_spreadsheet.Worksheet` object as the first
+         argument and the queryset item as the second argument, and
+         returns the cell value. Thus you can specify
+         :class:`~django_spreadsheet.Worksheet` methods in
+         :attr:`~django_spreadsheet.Worksheet.columns`, for example::
+
+            import django_spreadsheet
+
+            from myapp import models
+
+            class MyWorksheet(django_spreadsheet.Worksheet):
+                model = models.Book
+                name = "Books"
+
+                def get_book_title(self, book):
+                    if self.request.user.is_authenticated:
+                        return self.book.title
+                    else:
+                        return "Redacted"
+
+                columns = [
+                    {"heading": "Title", "value": get_book_title},
+                ]
+
+         Do this only if you need to use ``self``; otherwise use one of
+         the other forms.
 
    .. attribute:: django_spreadsheet.Worksheet.column_width_factor
 

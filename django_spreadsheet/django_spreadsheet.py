@@ -32,8 +32,10 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
         for col in self.columns:
             if isinstance(col["value"], str):
                 row.append(self._get_value_from_dotted_path(obj, col["value"]))
-            else:
+            elif col["value"].__code__.co_argcount == 1:
                 row.append(col["value"](obj))
+            else:
+                row.append(col["value"](self, obj))
         self.append(row)
 
     def _get_value_from_dotted_path(self, obj, attribute_chain):

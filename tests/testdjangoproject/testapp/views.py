@@ -6,6 +6,7 @@ from .models import Author, Book
 class BooksWorksheet(django_spreadsheet.Worksheet):
     model = Book
     name = "Books"
+
     columns = [
         {
             "heading": "Author",
@@ -21,7 +22,11 @@ class BooksWorksheet(django_spreadsheet.Worksheet):
 class AuthorsWorksheet(django_spreadsheet.Worksheet):
     model = Author
     name = "Authors"
-    columns = [{"heading": "Name", "value": "name"}]
+
+    def get_author_name(self, author):
+        return author.name
+
+    columns = [{"heading": "Name", "value": get_author_name}]
 
 
 class DownloadBooksWorkbookView(django_spreadsheet.WorkbookView):
