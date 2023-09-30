@@ -1,3 +1,4 @@
+import inspect
 import mimetypes
 from io import BytesIO
 
@@ -32,7 +33,7 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
         for col in self.columns:
             if isinstance(col["value"], str):
                 row.append(self._get_value_from_dotted_path(obj, col["value"]))
-            elif col["value"].__code__.co_argcount == 1:
+            elif len(inspect.signature(col["value"]).parameters) == 1:
                 row.append(col["value"](obj))
             else:
                 row.append(col["value"](self, obj))
