@@ -65,7 +65,7 @@ class WorksheetTestCase(TestCase, GetWorksheetBodyMixin):
 
     def test_headings_in_authors(self):
         first_row = next(self.wb["Authors"].rows)
-        self.assertEqual([cell.value for cell in first_row], ["Name"])
+        self.assertEqual([cell.value for cell in first_row], ["Name", "Name2"])
 
     def test_headings_in_books(self):
         first_row = next(self.wb["Books"].rows)
@@ -75,7 +75,7 @@ class WorksheetTestCase(TestCase, GetWorksheetBodyMixin):
         body = self._get_body("Authors")
         self.assertEqual(
             body,
-            [["J.K.Rowling"], ["J.R.R.Tolkien"]],
+            [["J.K.Rowling", "J.K.Rowling"], ["J.R.R.Tolkien", "J.R.R.Tolkien"]],
         )
 
     def test_body_in_books(self):
@@ -113,26 +113,17 @@ class GetQuerysetTestCase(TestCase, GetWorksheetBodyMixin):
         Book.objects.create(author=rowling, title="The Prisoner of Azkaban")
         Book.objects.create(author=rowling, title="The Goblet of Fire")
 
-    @staticmethod
-    def get_queryset(self):
-        return self.model.objects.order_by("-name").all()
-
     def setUp(self):
-        self.saved_get_queryset = AuthorsWorksheet.get_queryset
-        AuthorsWorksheet.get_queryset = self.get_queryset
         self.response = self.client.get("/downloadbooks/")
         with NamedTemporaryFile(suffix=".xlsx") as f:
             f.write(self.response.content)
             self.wb = openpyxl.load_workbook(f.name)
 
-    def tearDown(self):
-        AuthorsWorksheet.get_queryset = self.saved_get_queryset
-
     def test_body_in_authors(self):
         body = self._get_body("Authors")
         self.assertEqual(
             body,
-            [["J.R.R.Tolkien"], ["J.K.Rowling"]],
+            [["J.K.Rowling", "J.K.Rowling"], ["J.R.R.Tolkien", "J.R.R.Tolkien"]],
         )
 
 
