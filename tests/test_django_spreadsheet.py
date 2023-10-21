@@ -145,6 +145,24 @@ class HasRequestObjectTestCase(TestCase):
         self.response = self.client.get("/downloadbooks/")
 
 
+class HasViewInstanceTestCase(TestCase):
+    @staticmethod
+    def get_queryset(self):
+        self.view  # Will raise exception if it does not exist
+        return self.model.objects.all()
+
+    def setUp(self):
+        self.saved_get_queryset = AuthorsWorksheet.get_queryset
+        AuthorsWorksheet.get_queryset = self.get_queryset
+
+    def tearDown(self):
+        AuthorsWorksheet.get_queryset = self.saved_get_queryset
+
+    def test_has_view_instance(self):
+        # The following will raise exception if AuthorsWorksheet has no self.view
+        self.response = self.client.get("/downloadbooks/")
+
+
 class CustomColumnWidthFactorTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):

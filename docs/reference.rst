@@ -118,3 +118,19 @@ Worksheet
       multiply it with a number, namely
       :attr:`~django_spreadsheet.Worksheet.column_width_factor`. The default is
       1.23, which has been found with experimentation to provide good results.
+
+   .. attribute:: django_spreadsheet.Worksheet.view
+
+      When a :class:`~django_spreadsheet.WorkbookView` creates a
+      :class:`~django_spreadsheet.Worksheet` object, it creates this attribute
+      that points to the view instance.  One use case of this is if a workbook
+      (i.e. a :class:`django_spreadsheet.WorkbookView`) has many worksheets
+      that both need the same queries. In that case, in order to avoid making
+      the same queries multiple times, they can be stored in the view and
+      accessed from the worksheets.
+
+   .. attribute:: django_spreadsheet.Worksheet.request
+
+      When a :class:`~django_spreadsheet.WorkbookView` creates a
+      :class:`~django_spreadsheet.Worksheet` object, it creates this attribute
+      that points to request object.

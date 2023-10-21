@@ -73,6 +73,7 @@ class WorkbookView(View):
         for cls_worksheet in self.worksheets:
             sheet = self._wb.create_sheet(cls_worksheet.name)
             sheet.__class__ = cls_worksheet
+            sheet.view = self
             sheet.request = self.request
             sheet.fill()
 
