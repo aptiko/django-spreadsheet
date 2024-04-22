@@ -2,6 +2,11 @@
 History
 =======
 
+1.2.1 (2024-04-22)
+------------------
+
+* Updated requirements for compatibility with Django 4 and 5.
+
 1.2.0 (2023-10-21)
 ------------------
 
