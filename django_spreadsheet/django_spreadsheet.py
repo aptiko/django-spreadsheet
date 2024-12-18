@@ -64,7 +64,6 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
     def get_name(self):
         return self.name
 
-    @classmethod
     def get_columns(self):
         return self.columns
 

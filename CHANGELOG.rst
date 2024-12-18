@@ -2,10 +2,13 @@
 History
 =======
 
-1.3.0 (2024-12-18)
+1.4.0 (2024-12-18)
 ------------------
 
 * Added the get_name() and get_columns() methods of Worksheet.
+
+Note: 1.3.0 was a short-lived version released in the same day, of which
+get_columns() was a class method, but this didn't work well.
 
 1.2.1 (2024-04-22)
 ------------------

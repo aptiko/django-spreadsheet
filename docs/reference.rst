@@ -111,12 +111,12 @@ Worksheet
          Do this only if you need to use ``self``; otherwise use one of
          the other forms.
 
-   .. classmethod:: django_spreadsheet.Worksheet.get_columns
+   .. method:: django_spreadsheet.Worksheet.get_columns
 
       Returns a list of dictionaries with the format described in
       :attr:`columns`, specifying the columns of the worksheet. The
       default merely returns :attr:`columns`. Override if you need a
-      more complicated workflow, such as localized column headings.
+      more complicated workflow.
 
    .. attribute:: django_spreadsheet.Worksheet.column_width_factor
 
