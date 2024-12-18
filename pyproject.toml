@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0,<76", "setuptools-scm>=7.1,<9"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version"]
+name = "django-spreadsheet"
+requires-python = ">=3.10"
+dependencies = [
+    "django>=3.2,<6",
+    "openpyxl>=3,<4",
+]
+authors = [
+    {name = "Antonis Christofides", email = "antonis@antonischristofides.com"},
+]
+maintainers = [
+    {name = "Antonis Christofides", email = "antonis@antonischristofides.com"},
+]
+description = "Create a spreadsheet from the database with minimal code"
+readme = "README.rst"
+keywords = ["django-spreadsheet"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://github.com/aptiko/django-spreadsheet"
+Documentation = "https://django-spreadsheet.readthedocs.io"
+Repository = "https://github.com/aptiko/django-spreadsheet"
+Changelog = "https://github.com/aptiko/django-spreadsheet/blob/master/CHANGELOG.rst"
+
+[tool.flake8]
+exclude = ["docs"]
+max-line-length = 88
+
+[tool.setuptools_scm]
+write_to = "django_spreadsheet/_version.py"

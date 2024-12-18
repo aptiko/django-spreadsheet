@@ -107,3 +107,6 @@ ENV/
 
 # SQLite
 db.sqlite3
+
+# setuptools-scm
+_version.py
