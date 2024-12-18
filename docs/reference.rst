@@ -42,8 +42,14 @@ Worksheet
 
    .. attribute:: django_spreadsheet.Worksheet.name
 
-      Mandatory. The name of the worksheet—it will be used in the
-      worksheet tab.
+      Mandatory unless :meth:`get_name` is overridden. The name of the
+      worksheet—it will be used in the worksheet tab.
+
+   .. classmethod:: django_spreadsheet.Worksheet.get_name
+
+      Returns the name of the worksheet, which will be used in the
+      worksheet tab. The default merely returns :attr:`name`. Override
+      if you need a more complicated workflow, such as a localized name.
 
    .. method:: django_spreadsheet.Worksheet.get_queryset()
 
@@ -52,8 +58,9 @@ Worksheet
 
    .. attribute:: django_spreadsheet.Worksheet.columns
 
-      Mandatory. It is a list of dictionaries that specify the columns
-      of the worksheet. Each dictionary has the following items:
+      Mandatory unless :meth:`get_columns` is overridden. It is a list
+      of dictionaries that specify the columns of the worksheet. Each
+      dictionary has the following items:
 
       .. data:: heading
 
@@ -103,6 +110,13 @@ Worksheet
 
          Do this only if you need to use ``self``; otherwise use one of
          the other forms.
+
+   .. classmethod:: django_spreadsheet.Worksheet.get_columns
+
+      Returns a list of dictionaries with the format described in
+      :attr:`columns`, specifying the columns of the worksheet. The
+      default merely returns :attr:`columns`. Override if you need a
+      more complicated workflow, such as localized column headings.
 
    .. attribute:: django_spreadsheet.Worksheet.column_width_factor
 

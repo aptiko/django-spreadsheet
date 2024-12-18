@@ -20,7 +20,7 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
         self._autosize_columns()
 
     def _fill_headings(self):
-        row = [column["heading"] for column in self.columns]
+        row = [column["heading"] for column in self.get_columns()]
         self.append(row)
         self.row_dimensions[1].font = openpyxl.styles.Font(bold=True)
 
@@ -30,7 +30,7 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
 
     def _append_body_row(self, obj):
         row = []
-        for col in self.columns:
+        for col in self.get_columns():
             if isinstance(col["value"], str):
                 row.append(self._get_value_from_dotted_path(obj, col["value"]))
             elif len(inspect.signature(col["value"]).parameters) == 1:
@@ -60,6 +60,14 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
                 column_width * self.column_width_factor
             )
 
+    @classmethod
+    def get_name(self):
+        return self.name
+
+    @classmethod
+    def get_columns(self):
+        return self.columns
+
 
 class WorkbookView(View):
     def get(self, request, *args, **kwargs):
@@ -71,7 +79,7 @@ class WorkbookView(View):
     def _create_sheets(self):
         del self._wb["Sheet"]  # Remove default sheet
         for cls_worksheet in self.worksheets:
-            sheet = self._wb.create_sheet(cls_worksheet.name)
+            sheet = self._wb.create_sheet(cls_worksheet.get_name())
             sheet.__class__ = cls_worksheet
             sheet.view = self
             sheet.request = self.request

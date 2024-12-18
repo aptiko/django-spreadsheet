@@ -2,6 +2,11 @@
 History
 =======
 
+1.3.0 (2024-12-18)
+------------------
+
+* Added the get_name() and get_columns() methods of Worksheet.
+
 1.2.1 (2024-04-22)
 ------------------
 
