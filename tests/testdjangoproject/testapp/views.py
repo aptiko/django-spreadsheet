@@ -44,7 +44,7 @@ class AuthorsWorksheet(django_spreadsheet.Worksheet):
 
 class DownloadBooksWorkbookView(django_spreadsheet.WorkbookView):
     filename = "books.xlsx"
-    worksheets = [
+    worksheet_classes = [
         BooksWorksheet,
         AuthorsWorksheet,
     ]

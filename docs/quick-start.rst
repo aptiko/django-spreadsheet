@@ -2,6 +2,9 @@
 Quick start
 ===========
 
+Smart view
+==========
+
 Here is an example. This code should go to ``views.py``::
 
     import django_spreadsheet
@@ -26,7 +29,7 @@ Here is an example. This code should go to ``views.py``::
 
     class DownloadBooksWorkbookView(django_spreadsheet.WorkbookView):
         filename = "books.xlsx"
-        worksheets = [
+        worksheet_classes = [
             BooksWorksheet,
         ]
 
@@ -36,3 +39,19 @@ a workbook containing a single worksheet, ``BooksWorksheet``. Its title
 is "Books" and it has two columns, "Author" and "Title". For each
 ``book``, the "Author" is ``book.author.name`` and the title is
 ``book.title.capitalize()``.
+
+Less magic
+==========
+
+Instead of using a :class:`~django_spreadsheet.WorkbookView`, which assumes
+much, you can manually create a :class:`~django_spreadsheet.Workbook`::
+
+    class BooksWorkbook(django_spreadsheet.Workbook):
+        worksheet_classes = [
+            BooksWorksheet,
+        ]
+
+
+    workbook = BooksWorkbook()
+    with open("books.xlsx", "wb") as output:
+        workbook.save(output)

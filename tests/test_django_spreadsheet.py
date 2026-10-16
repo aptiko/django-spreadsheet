@@ -1,11 +1,12 @@
-from tempfile import NamedTemporaryFile
+from io import BytesIO
 
-from django.test import TestCase
+from django.test import RequestFactory, SimpleTestCase, TestCase
 
 import openpyxl
 
+from django_spreadsheet import Workbook, WorkbookView, Worksheet
 from testapp.models import Author, Book
-from testapp.views import AuthorsWorksheet, BooksWorksheet
+from testapp.views import BooksWorksheet
 
 
 class WorkbookViewTestCase(TestCase):
@@ -28,9 +29,7 @@ class WorkbookViewTestCase(TestCase):
         )
 
     def test_returned_workbook_contains_two_sheets(self):
-        with NamedTemporaryFile(suffix=".xlsx") as f:
-            f.write(self.response.content)
-            wb = openpyxl.load_workbook(f.name)
+        wb = openpyxl.load_workbook(BytesIO(self.response.content))
         self.assertEqual(wb.sheetnames, ["Books", "Authors"])
 
 
@@ -59,9 +58,7 @@ class WorksheetTestCase(TestCase, GetWorksheetBodyMixin):
 
     def setUp(self):
         self.response = self.client.get("/downloadbooks/")
-        with NamedTemporaryFile(suffix=".xlsx") as f:
-            f.write(self.response.content)
-            self.wb = openpyxl.load_workbook(f.name)
+        self.wb = openpyxl.load_workbook(BytesIO(self.response.content))
 
     def test_headings_in_authors(self):
         first_row = next(self.wb["Authors"].rows)
@@ -115,9 +112,7 @@ class GetQuerysetTestCase(TestCase, GetWorksheetBodyMixin):
 
     def setUp(self):
         self.response = self.client.get("/downloadbooks/")
-        with NamedTemporaryFile(suffix=".xlsx") as f:
-            f.write(self.response.content)
-            self.wb = openpyxl.load_workbook(f.name)
+        self.wb = openpyxl.load_workbook(BytesIO(self.response.content))
 
     def test_body_in_authors(self):
         body = self._get_body("Authors")
@@ -125,42 +120,6 @@ class GetQuerysetTestCase(TestCase, GetWorksheetBodyMixin):
             body,
             [["J.K.Rowling", "J.K.Rowling"], ["J.R.R.Tolkien", "J.R.R.Tolkien"]],
         )
-
-
-class HasRequestObjectTestCase(TestCase):
-    @staticmethod
-    def get_queryset(self):
-        self.request  # Will raise exception if it does not exist
-        return self.model.objects.all()
-
-    def setUp(self):
-        self.saved_get_queryset = AuthorsWorksheet.get_queryset
-        AuthorsWorksheet.get_queryset = self.get_queryset
-
-    def tearDown(self):
-        AuthorsWorksheet.get_queryset = self.saved_get_queryset
-
-    def test_has_request_object(self):
-        # The following will raise exception if AuthorsWorksheet has no self.request
-        self.response = self.client.get("/downloadbooks/")
-
-
-class HasViewInstanceTestCase(TestCase):
-    @staticmethod
-    def get_queryset(self):
-        self.view  # Will raise exception if it does not exist
-        return self.model.objects.all()
-
-    def setUp(self):
-        self.saved_get_queryset = AuthorsWorksheet.get_queryset
-        AuthorsWorksheet.get_queryset = self.get_queryset
-
-    def tearDown(self):
-        AuthorsWorksheet.get_queryset = self.saved_get_queryset
-
-    def test_has_view_instance(self):
-        # The following will raise exception if AuthorsWorksheet has no self.view
-        self.response = self.client.get("/downloadbooks/")
 
 
 class CustomColumnWidthFactorTestCase(TestCase):
@@ -177,9 +136,7 @@ class CustomColumnWidthFactorTestCase(TestCase):
         self.saved_column_width_factor = BooksWorksheet.column_width_factor
         BooksWorksheet.column_width_factor = 1.42
         self.response = self.client.get("/downloadbooks/")
-        with NamedTemporaryFile(suffix=".xlsx") as f:
-            f.write(self.response.content)
-            self.wb = openpyxl.load_workbook(f.name)
+        self.wb = openpyxl.load_workbook(BytesIO(self.response.content))
 
     def tearDown(self):
         BooksWorksheet.column_width_factor = self.saved_column_width_factor
@@ -189,3 +146,70 @@ class CustomColumnWidthFactorTestCase(TestCase):
             self.wb["Books"].column_dimensions["B"].width,
             len("The prisoner of azkaban") * 1.42,
         )
+
+
+class RowsWorksheet(Worksheet):
+    name = "Rows"
+    columns = [{"heading": "Value", "value": lambda value: value}]
+
+    def get_queryset(self):
+        return self.parent.rows
+
+
+class RowsWorkbook(Workbook):
+    worksheet_classes = [RowsWorksheet]
+
+    def __init__(self, rows=(), **kwargs):
+        self.rows = rows
+        super().__init__(**kwargs)
+
+
+class WorkbookTestCase(SimpleTestCase):
+    def test_class_declaration_replaces_default_sheet(self):
+        self.assertEqual(RowsWorkbook().sheetnames, ["Rows"])
+
+    def test_saves_rows_from_parent_to_file_like_object(self):
+        output = BytesIO()
+        RowsWorkbook(rows=["example"]).save(output)
+        workbook = openpyxl.load_workbook(output)
+        self.assertEqual(list(workbook["Rows"].values), [("Value",), ("example",)])
+
+    def test_constructor_overrides_declared_worksheet_classes(self):
+        class OtherWorksheet(RowsWorksheet):
+            name = "Other"
+
+        workbook = RowsWorkbook(worksheet_classes=[OtherWorksheet])
+        self.assertEqual(workbook.sheetnames, ["Other"])
+
+    def test_worksheet_name_override(self):
+        class NamedWorksheet(RowsWorksheet):
+            @classmethod
+            def get_name(cls):
+                return "Custom name"
+
+        workbook = RowsWorkbook(worksheet_classes=[NamedWorksheet])
+        self.assertEqual(workbook.sheetnames, ["Custom name"])
+
+    def test_column_override_reads_parent_attributes(self):
+        class CustomColumnsWorksheet(RowsWorksheet):
+            def get_columns(self):
+                return [{"heading": self.parent.heading, "value": lambda row: row}]
+
+        class CustomColumnsWorkbook(RowsWorkbook):
+            worksheet_classes = [CustomColumnsWorksheet]
+            heading = "Custom heading"
+
+        self.assertEqual(CustomColumnsWorkbook()["Rows"]["A1"].value, "Custom heading")
+
+
+class CustomWorkbookViewTestCase(SimpleTestCase):
+    def test_serializes_workbook_returned_by_override(self):
+        class DownloadRows(WorkbookView):
+            filename = "rows.xlsx"
+
+            def get_workbook(self):
+                return RowsWorkbook(rows=["custom"])
+
+        response = DownloadRows.as_view()(RequestFactory().get("/"))
+        workbook = openpyxl.load_workbook(BytesIO(response.content))
+        self.assertEqual(workbook["Rows"]["A2"].value, "custom")

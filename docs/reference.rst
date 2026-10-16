@@ -2,6 +2,21 @@
 Reference
 =========
 
+Workbook
+========
+
+.. class:: django_spreadsheet.Workbook(worksheet_classes=None)
+
+   An ``openpyxl.Workbook`` subclass that creates and fills the given
+   worksheet classes, in order, during construction.  Typically it is
+   subclassed, and :attr:`worksheet_classes` is defined on the
+   subclass as a class attribute. If ``worksheet_classes`` is supplied to the
+   constructor, it overrides the class attribute for that instance.
+
+   .. attribute:: django_spreadsheet.Workbook.worksheet_classes
+
+      A list of :class:`~django_spreadsheet.Worksheet` classes, in tab order.
+
 WorkbookView
 ============
 
@@ -9,7 +24,8 @@ WorkbookView
 
    Base class for a Django view whose response is an xlsx workbook. You
    need to specify :attr:`~django_spreadsheet.filename` and
-   :attr:`~django_spreadsheet.worksheets`.
+   :attr:`~django_spreadsheet.WorkbookView.worksheet_classes` (however
+   overriding ``get_workbook()`` also works).
 
    .. attribute:: django_spreadsheet.WorkbookView.filename
 
@@ -17,10 +33,16 @@ WorkbookView
       ``Content-disposition`` header of the response, so it will be the
       filename that the browser will use to save the workbook as.
 
-   .. attribute:: django_spreadsheet.WorkbookView.worksheets
+   .. attribute:: django_spreadsheet.WorkbookView.worksheet_classes
 
       A list of :class:`~django_spreadsheet.Worksheet` classes. The
       returned workbook will contain these worksheets.
+
+   .. method:: get_workbook()
+
+      Create and return a populated :class:`~django_spreadsheet.Workbook`.
+      The default returns
+      ``Workbook(worksheet_classes=self.worksheet_classes)``.
 
 Worksheet
 =========
@@ -31,21 +53,21 @@ Worksheet
 
    Do not attempt to instantiate :class:`~django_spreadsheet.Worksheet`
    objects directly. They are only meant to be instantiated
-   automatically by :class:`~django_spreadsheet.WorkbookView`, which
-   will also set ``self.request`` to the Django request object. This can
-   come in handy in
-   :meth:`~django_spreadsheet.Worksheet.get_queryset()`.
+   automatically by :class:`~django_spreadsheet.Workbook`.
+
+   Subclasses may define these class attributes:
 
    .. attribute:: django_spreadsheet.Worksheet.model
 
-      Mandatory. The model that will be queried to populate the worksheet.
+      The model queried by the default ``get_queryset()``. Not required if
+      ``get_queryset()`` is overridden.
 
    .. attribute:: django_spreadsheet.Worksheet.name
 
       Mandatory unless :meth:`get_name` is overridden. The name of the
       worksheet—it will be used in the worksheet tab.
 
-   .. classmethod:: django_spreadsheet.Worksheet.get_name
+   .. classmethod:: django_spreadsheet.Worksheet.get_name()
 
       Returns the name of the worksheet, which will be used in the
       worksheet tab. The default merely returns :attr:`name`. Override
@@ -54,7 +76,8 @@ Worksheet
    .. method:: django_spreadsheet.Worksheet.get_queryset()
 
       Optional. The default returns ``self.model.objects.all()``.
-      Override it if you need a different queryset.
+      Override it to return a different queryset or any iterable of row
+      objects, for example ``return self.parent.books``.
 
    .. attribute:: django_spreadsheet.Worksheet.columns
 
@@ -99,17 +122,15 @@ Worksheet
                 name = "Books"
 
                 def get_book_title(self, book):
-                    if self.request.user.is_authenticated:
-                        return self.book.title
-                    else:
-                        return "Redacted"
+                    return self.parent.title_prefix + book.title
 
                 columns = [
                     {"heading": "Title", "value": get_book_title},
                 ]
 
-         Do this only if you need to use ``self``; otherwise use one of
-         the other forms.
+         In this example, set ``title_prefix`` on your workbook subclass
+         before calling ``super().__init__()``. Use a two-argument function
+         only if you need ``self``; otherwise use one of the other forms.
 
    .. method:: django_spreadsheet.Worksheet.get_columns
 
@@ -132,19 +153,3 @@ Worksheet
       multiply it with a number, namely
       :attr:`~django_spreadsheet.Worksheet.column_width_factor`. The default is
       1.23, which has been found with experimentation to provide good results.
-
-   .. attribute:: django_spreadsheet.Worksheet.view
-
-      When a :class:`~django_spreadsheet.WorkbookView` creates a
-      :class:`~django_spreadsheet.Worksheet` object, it creates this attribute
-      that points to the view instance.  One use case of this is if a workbook
-      (i.e. a :class:`django_spreadsheet.WorkbookView`) has many worksheets
-      that both need the same queries. In that case, in order to avoid making
-      the same queries multiple times, they can be stored in the view and
-      accessed from the worksheets.
-
-   .. attribute:: django_spreadsheet.Worksheet.request
-
-      When a :class:`~django_spreadsheet.WorkbookView` creates a
-      :class:`~django_spreadsheet.Worksheet` object, it creates this attribute
-      that points to request object.

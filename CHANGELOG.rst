@@ -2,6 +2,25 @@
 History
 =======
 
+2.0.0 (2026-10-16)
+------------------
+
+Backwards-incompatible changes:
+
+* ``WorkbookView``'s ``worksheets`` attribute has been renamed to
+  ``worksheet_classes``.
+
+* ``Worksheet``'s ``view`` and ``request`` attributes have been removed.
+  Instead, use the openpyxl's ``Worksheet.parent`` attribute to access the
+  workbook. If you need to access the view or the request object, you should
+  customize ``Workbook`` or ``WorkbookView.get_workbook()`` so that the
+  necessary data is accessible by the workbook through custom attributes.
+
+Other changes:
+
+* Added a ``Workbook`` class (useful if you need to generate workbooks outside
+  of a Django view.)
+
 1.4.0 (2024-12-18)
 ------------------
 

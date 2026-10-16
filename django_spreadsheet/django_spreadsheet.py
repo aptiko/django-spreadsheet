@@ -68,26 +68,32 @@ class Worksheet(openpyxl.worksheet.worksheet.Worksheet):
         return self.columns
 
 
-class WorkbookView(View):
-    def get(self, request, *args, **kwargs):
-        self._wb = openpyxl.Workbook()
-        self._create_sheets()
-        self._create_response()
-        return self._response
+class Workbook(openpyxl.Workbook):
+    worksheet_classes: list[type[Worksheet]]
 
-    def _create_sheets(self):
-        del self._wb["Sheet"]  # Remove default sheet
-        for cls_worksheet in self.worksheets:
-            sheet = self._wb.create_sheet(cls_worksheet.get_name())
+    def __init__(self, worksheet_classes=None):
+        if worksheet_classes is not None:
+            self.worksheet_classes = worksheet_classes
+        super().__init__()
+        del self["Sheet"]  # Remove default sheet
+        for cls_worksheet in self.worksheet_classes:
+            sheet = self.create_sheet(cls_worksheet.get_name())
             sheet.__class__ = cls_worksheet
-            sheet.view = self
-            sheet.request = self.request
             sheet.fill()
 
-    def _create_response(self):
+
+class WorkbookView(View):
+    filename: str
+    worksheet_classes: list[type[Worksheet]]
+
+    def get_workbook(self):
+        return Workbook(worksheet_classes=self.worksheet_classes)
+
+    def get(self, request, *args, **kwargs):
         obj = BytesIO()
-        self._wb.save(obj)
-        self._response = HttpResponse(
+        self.get_workbook().save(obj)
+        response = HttpResponse(
             obj.getvalue(), content_type=mimetypes.guess_type(self.filename)[0]
         )
-        self._response["Content-Disposition"] = f"attachment; filename={self.filename}"
+        response["Content-Disposition"] = f"attachment; filename={self.filename}"
+        return response
